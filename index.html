@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人眼成像与视力矫正演示 - 初中物理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .main-area {
+            display: flex;
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        canvas {
+            display: block;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            background: #f8f9fa;
+            width: 100%;
+        }
+        
+        .control-panel {
+            width: 340px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+        
+        .control-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+            background: #bdc3c7;
+        }
+        
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .control-group input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .control-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .control-group .value-display {
+            display: inline-block;
+            float: right;
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .status-display {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .status-display strong {
+            color: #d63031;
+            font-size: 15px;
+        }
+        
+        .legend {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 30px;
+            height: 3px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        
+        .auto-adjust-btn {
+            width: 100%;
+            padding: 12px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .auto-adjust-btn:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .auto-adjust-btn:active {
+            transform: translateY(0);
+        }
+        
+        .auto-adjust-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .slider-container {
+            position: relative;
+        }
+        
+        .slider-marks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+        
+        .thickness-info {
+            margin-top: 8px;
+            padding: 8px;
+            background: #e8f5e9;
+            border-left: 3px solid #27ae60;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #2c3e50;
+        }
+        
+        .thickness-info strong {
+            color: #27ae60;
+        }
+        
+        .note {
+            margin-top: 10px;
+            padding: 8px;
+            background: #e3f2fd;
+            border-left: 3px solid #2196f3;
+            border-radius: 3px;
+            font-size: 11px;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👁️ 人眼成像与视力矫正交互演示</h1>
+        <p class="subtitle">物理教学 · 凸透镜成像 · 近视与远视的形成与矫正</p>
+        
+        <div class="main-area">
+            <div class="canvas-container">
+                <canvas id="eyeCanvas" width="900" height="500"></canvas>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f39c12; width: 15px; height: 15px; border-radius: 50%;"></div>
+                        <span>点光源（物体）</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #c0392b; height: 2px;"></div>
+                        <span>入射光线</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>折射光线（眼内）</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #27ae60; height: 5px;"></div>
+                        <span>成像位置</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db; height: 5px;"></div>
+                        <span>视网膜位置</span>
+                    </div>
+                    <div class="note">
+                        💡 提示：为便于观察，像的位置偏差已放大5倍显示
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-panel">
+                <h2 style="margin-bottom: 20px; color: #2c3e50;">🎛️ 控制面板</h2>
+                
+                <div class="control-group">
+                    <label>眼睛类型</label>
+                    <select id="eyeType">
+                        <option value="normal">正常眼（正视）</option>
+                        <option value="myopia">近视眼</option>
+                        <option value="hyperopia">远视眼</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        物距（cm）
+                        <span class="value-display" id="distanceValue">200</span>
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" id="objectDistance" min="20" max="500" value="200" step="10">
+                        <div class="slider-marks">
+                            <span>20</span>
+                            <span>100</span>
+                            <span>200</span>
+                            <span>300</span>
+                            <span>500</span>
+                        </div>
+                    </div>
+                    <small style="color: #7f8c8d;">物体距离眼睛的距离</small>
+                </div>
+                
+                <div class="control-group">
+                    <button class="auto-adjust-btn" id="autoAdjustBtn">
+                        🎯 自动调节晶状体（看清物体）
+                    </button>
+                </div>
+                
+                <div class="control-group">
+                    <label>
+                        晶状体厚度调节
+                        <span class="value-display" id="thicknessValue">50.0</span>
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" id="lensThickness" min="0" max="100" value="50" step="0.1">
+                        <div class="slider-marks">
+                            <span>0<br>(最薄)</span>
+                            <span>25</span>
+                            <span>50</span>
+                            <span>75</span>
+                            <span>100<br>(最厚)</span>
+                        </div>
+                    </div>
+                    <small style="color: #7f8c8d;">调节能力（0=最薄/看远，100=最厚/看近）</small>
+                    <div class="thickness-info" id="thicknessInfo">
+                        实际物理厚度: <strong id="absoluteThicknessValue">50.0</strong>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="wearGlasses">
+                        <label for="wearGlasses" style="margin: 0;">佩戴矫正眼镜</label>
+                    </div>
+                </div>
+                
+                <div class="control-group" id="glassPowerGroup" style="display: none;">
+                    <label>
+                        眼镜度数
+                        <span class="value-display" id="glassPowerValue">0</span>
+                    </label>
+                    <input type="range" id="glassPower" min="-600" max="400" value="0" step="25">
+                    <small style="color: #7f8c8d;">负值=凹透镜，正值=凸透镜</small>
+                </div>
+                
+                <div class="status-display">
+                    <strong>成像状态：</strong>
+                    <p id="statusText" style="margin-top: 10px;">正在计算...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('eyeCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 控制元素
+        const eyeTypeSelect = document.getElementById('eyeType');
+        const objectDistanceSlider = document.getElementById('objectDistance');
+        const lensThicknessSlider = document.getElementById('lensThickness');
+        const wearGlassesCheck = document.getElementById('wearGlasses');
+        const glassPowerSlider = document.getElementById('glassPower');
+        const glassPowerGroup = document.getElementById('glassPowerGroup');
+        const autoAdjustBtn = document.getElementById('autoAdjustBtn');
+        
+        // 显示元素
+        const distanceValue = document.getElementById('distanceValue');
+        const thicknessValue = document.getElementById('thicknessValue');
+        const absoluteThicknessValue = document.getElementById('absoluteThicknessValue');
+        const glassPowerValue = document.getElementById('glassPowerValue');
+        const statusText = document.getElementById('statusText');
+        
+        // 眼球参数
+        const EYE = {
+            centerX: 550,
+            centerY: 250,
+            radius: 100,
+            lensX: 470,
+            retinaX: 640,
+            eyeAxisLength: 3.4, // 眼轴长度(cm)，从晶状体到视网膜
+        };
+        
+        // 显示放大系数（关键修改：放大像位置的偏差）
+        const DISPLAY_MAGNIFICATION = 5;
+        
+        // 状态变量
+        let state = {
+            eyeType: 'normal',
+            objectDistance: 200,
+            lensThickness: 50.0,  // 相对厚度（调节能力）0-100
+            wearGlasses: false,
+            glassPower: 0,
+        };
+        
+        // 不同眼睛类型的调节范围（关键：绝对厚度范围）
+        const EYE_PARAMS = {
+            normal: {
+                minAbsThickness: 20,  // 调到最薄时的绝对厚度
+                maxAbsThickness: 80,  // 调到最厚时的绝对厚度
+                description: '正常眼可以在较大范围内调节'
+            },
+            myopia: {
+                minAbsThickness: 50,  // 近视眼即使调到最薄，绝对厚度也有50
+                maxAbsThickness: 100, // 调到最厚时的绝对厚度
+                description: '近视眼晶状体偏厚，无法调得很薄'
+            },
+            hyperopia: {
+                minAbsThickness: 0,   // 远视眼调到最薄时的绝对厚度
+                maxAbsThickness: 50,  // 远视眼即使调到最厚，绝对厚度也只有50
+                description: '远视眼晶状体偏薄，无法调得很厚'
+            }
+        };
+        
+        // 绝对厚度到焦距的映射（统一的物理规律）
+        function absoluteThicknessToFocal(absoluteThickness) {
+            // absoluteThickness: 0-100
+            // 0 = 最薄 → 焦距最长 (4.0cm)
+            // 100 = 最厚 → 焦距最短 (2.5cm)
+            const minFocal = 2.5;  // 最厚时的焦距
+            const maxFocal = 4.0;  // 最薄时的焦距
+            const t = absoluteThickness / 100;
+            return maxFocal - t * (maxFocal - minFocal);
+        }
+        
+        // 焦距到绝对厚度的映射
+        function focalToAbsoluteThickness(focal) {
+            const minFocal = 2.5;
+            const maxFocal = 4.0;
+            // 限制焦距范围
+            focal = Math.max(minFocal, Math.min(maxFocal, focal));
+            const t = (maxFocal - focal) / (maxFocal - minFocal);
+            return t * 100;
+        }
+        
+        // 相对厚度（滑块值0-100）转换为绝对厚度
+        function relativeToAbsolute(relativeThickness, eyeType) {
+            const params = EYE_PARAMS[eyeType];
+            const t = relativeThickness / 100;
+            return params.minAbsThickness + t * (params.maxAbsThickness - params.minAbsThickness);
+        }
+        
+        // 绝对厚度转换为相对厚度
+        function absoluteToRelative(absoluteThickness, eyeType) {
+            const params = EYE_PARAMS[eyeType];
+            // 限制在调节范围内
+            absoluteThickness = Math.max(params.minAbsThickness, Math.min(params.maxAbsThickness, absoluteThickness));
+            const t = (absoluteThickness - params.minAbsThickness) / (params.maxAbsThickness - params.minAbsThickness);
+            return t * 100;
+        }
+        
+        // 事件监听
+        eyeTypeSelect.addEventListener('change', (e) => {
+            state.eyeType = e.target.value;
+            
+            // 根据眼睛类型调整建议眼镜度数
+            if (state.eyeType === 'myopia') {
+                glassPowerSlider.value = -300;
+                state.glassPower = -300;
+            } else if (state.eyeType === 'hyperopia') {
+                glassPowerSlider.value = 250;
+                state.glassPower = 250;
+            } else {
+                glassPowerSlider.value = 0;
+                state.glassPower = 0;
+            }
+            updateGlassPowerDisplay();
+            updateAbsoluteThicknessDisplay();
+            draw();
+        });
+        
+        objectDistanceSlider.addEventListener('input', (e) => {
+            state.objectDistance = parseInt(e.target.value);
+            distanceValue.textContent = state.objectDistance;
+            draw();
+        });
+        
+        lensThicknessSlider.addEventListener('input', (e) => {
+            state.lensThickness = parseFloat(e.target.value);
+            thicknessValue.textContent = state.lensThickness.toFixed(1);
+            updateAbsoluteThicknessDisplay();
+            draw();
+        });
+        
+        wearGlassesCheck.addEventListener('change', (e) => {
+            state.wearGlasses = e.target.checked;
+            glassPowerGroup.style.display = state.wearGlasses ? 'block' : 'none';
+            draw();
+        });
+        
+        glassPowerSlider.addEventListener('input', (e) => {
+            state.glassPower = parseInt(e.target.value);
+            updateGlassPowerDisplay();
+            draw();
+        });
+        
+        // 自动调节按钮
+        autoAdjustBtn.addEventListener('click', () => {
+            autoAdjustLens();
+        });
+        
+        function updateGlassPowerDisplay() {
+            const power = state.glassPower;
+            const type = power < 0 ? '凹透镜' : power > 0 ? '凸透镜' : '平光';
+            glassPowerValue.textContent = `${power}度 (${type})`;
+        }
+        
+        function updateAbsoluteThicknessDisplay() {
+            const absThickness = relativeToAbsolute(state.lensThickness, state.eyeType);
+            absoluteThicknessValue.textContent = absThickness.toFixed(1);
+        }
+        
+        // 自动调节晶状体厚度
+        function autoAdjustLens() {
+            const u = state.objectDistance; // 物距(cm)
+            const v = EYE.eyeAxisLength; // 像距(cm) - 固定为眼轴长度
+            
+            // 如果戴眼镜，需要考虑眼镜的作用
+            let effectiveU = u;
+            if (state.wearGlasses && state.glassPower !== 0) {
+                const fGlass = 10000 / state.glassPower; // 眼镜焦距(cm)
+                const glassToLens = 2;
+                const uGlass = u - glassToLens;
+                
+                if (Math.abs(uGlass - fGlass) > 0.1) {
+                    const vGlass = (fGlass * uGlass) / (uGlass - fGlass);
+                    
+                    if (vGlass < 0) {
+                        effectiveU = glassToLens + Math.abs(vGlass);
+                    } else {
+                        effectiveU = Math.abs(vGlass - glassToLens);
+                    }
+                }
+            }
+            
+            // 计算需要的焦距：1/f = 1/u + 1/v → f = uv/(u+v)
+            const requiredFocal = (effectiveU * v) / (effectiveU + v);
+            
+            // 将焦距转换为绝对厚度
+            const requiredAbsThickness = focalToAbsoluteThickness(requiredFocal);
+            
+            const params = EYE_PARAMS[state.eyeType];
+            
+            // 检查是否在该眼睛类型的调节范围内
+            if (requiredAbsThickness < params.minAbsThickness || requiredAbsThickness > params.maxAbsThickness) {
+                let message = '';
+                if (state.eyeType === 'myopia') {
+                    message = `❌ 近视眼无法看清该物体！\n\n`;
+                    message += `需要的焦距: ${requiredFocal.toFixed(2)}cm\n`;
+                    message += `需要的绝对厚度: ${requiredAbsThickness.toFixed(1)}\n`;
+                    message += `但近视眼的调节范围: ${params.minAbsThickness} - ${params.maxAbsThickness}\n\n`;
+                    if (requiredAbsThickness < params.minAbsThickness) {
+                        message += `物体太远，即使调到最薄（绝对厚度${params.minAbsThickness}），仍无法看清。\n`;
+                        message += `需要配戴凹透镜矫正！`;
+                    }
+                } else if (state.eyeType === 'hyperopia') {
+                    message = `❌ 远视眼无法看清该物体！\n\n`;
+                    message += `需要的焦距: ${requiredFocal.toFixed(2)}cm\n`;
+                    message += `需要的绝对厚度: ${requiredAbsThickness.toFixed(1)}\n`;
+                    message += `但远视眼的调节范围: ${params.minAbsThickness} - ${params.maxAbsThickness}\n\n`;
+                    if (requiredAbsThickness > params.maxAbsThickness) {
+                        message += `物体太近，即使调到最厚（绝对厚度${params.maxAbsThickness}），仍无法看清。\n`;
+                        message += `需要配戴凸透镜矫正！`;
+                    }
+                } else {
+                    message = `⚠️ 物距超出正常调节范围！\n`;
+                    message += `需要焦距: ${requiredFocal.toFixed(2)}cm\n`;
+                    message += `需要绝对厚度: ${requiredAbsThickness.toFixed(1)}\n`;
+                    message += `调节范围: ${params.minAbsThickness} - ${params.maxAbsThickness}`;
+                }
+                alert(message);
+                return;
+            }
+            
+            // 将绝对厚度转换为相对厚度
+            const relativeThickness = absoluteToRelative(requiredAbsThickness, state.eyeType);
+            
+            // 应用厚度（带动画效果）
+            animateThickness(state.lensThickness, relativeThickness);
+        }
+        
+        // 动画改变厚度
+        function animateThickness(from, to) {
+            const duration = 500; // ms
+            const steps = 30;
+            const stepTime = duration / steps;
+            const increment = (to - from) / steps;
+            let current = from;
+            let step = 0;
+            
+            const interval = setInterval(() => {
+                step++;
+                current += increment;
+                
+                if (step >= steps) {
+                    current = to;
+                    clearInterval(interval);
+                }
+                
+                state.lensThickness = current;
+                lensThicknessSlider.value = current;
+                thicknessValue.textContent = current.toFixed(1);
+                updateAbsoluteThicknessDisplay();
+                draw();
+            }, stepTime);
+        }
+        
+        // 计算当前晶状体焦距
+        function calculateLensFocalLength() {
+            const absThickness = relativeToAbsolute(state.lensThickness, state.eyeType);
+            return absoluteThicknessToFocal(absThickness);
+        }
+        
+        // 计算眼镜焦距
+        function calculateGlassFocalLength() {
+            if (!state.wearGlasses || state.glassPower === 0) {
+                return Infinity;
+            }
+            return 10000 / state.glassPower;
+        }
+        
+        // 计算成像位置（实际物理位置）
+        function calculateImagePosition() {
+            const u = state.objectDistance;
+            const fLens = calculateLensFocalLength();
+            
+            let effectiveU = u;
+            if (state.wearGlasses && state.glassPower !== 0) {
+                const fGlass = calculateGlassFocalLength();
+                const glassToLens = 2;
+                const uGlass = u - glassToLens;
+                
+                if (Math.abs(uGlass - fGlass) > 0.01) {
+                    const vGlass = (fGlass * uGlass) / (uGlass - fGlass);
+                    
+                    if (vGlass < 0) {
+                        effectiveU = glassToLens + Math.abs(vGlass);
+                    } else {
+                        effectiveU = Math.abs(vGlass - glassToLens);
+                    }
+                }
+            }
+            
+            if (Math.abs(effectiveU - fLens) < 0.01) {
+                return 1000; // 无限远
+            }
+            
+            const v = (fLens * effectiveU) / (effectiveU - fLens);
+            return v;
+        }
+        
+        // 计算显示用的成像位置（放大偏差）
+        function calculateDisplayImagePosition() {
+            const actualImagePos = calculateImagePosition();
+            const retinaPos = EYE.eyeAxisLength;
+            const diff = actualImagePos - retinaPos;
+            
+            // 放大偏差，便于观察
+            const displayImagePos = retinaPos + diff * DISPLAY_MAGNIFICATION;
+            
+            return {
+                actual: actualImagePos,
+                display: displayImagePos
+            };
+        }
+        
+        // 绘制函数
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            drawObject();
+            drawEyeBall();
+            drawRetina();
+            drawLens();
+            
+            if (state.wearGlasses) {
+                drawGlasses();
+            }
+            
+            drawLightRays();
+            drawImagePosition();
+            updateStatus();
+            drawLabels();
+        }
+        
+        // 绘制物体（点光源）
+        function drawObject() {
+            const maxDistance = 500;
+            const minDistance = 20;
+            const leftMargin = 50;
+            const maxObjectX = EYE.lensX - 80;
+            
+            const objectX = maxObjectX - ((state.objectDistance - minDistance) / (maxDistance - minDistance)) * (maxObjectX - leftMargin);
+            const objectY = EYE.centerY;
+            
+            // 绘制点光源
+            ctx.fillStyle = '#f39c12';
+            ctx.strokeStyle = '#d68910';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(objectX, objectY, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 发光效果
+            const gradient = ctx.createRadialGradient(objectX, objectY, 0, objectX, objectY, 20);
+            gradient.addColorStop(0, 'rgba(243, 156, 18, 0.6)');
+            gradient.addColorStop(1, 'rgba(243, 156, 18, 0)');
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(objectX, objectY, 20, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 物距标注线
+            ctx.strokeStyle = '#95a5a6';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(objectX, objectY + 35);
+            ctx.lineTo(EYE.lensX - 40, objectY + 35);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // 物距文字
+            ctx.fillStyle = '#7f8c8d';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`物距: ${state.objectDistance}cm`, (objectX + EYE.lensX - 40) / 2, objectY + 50);
+            ctx.textAlign = 'left';
+            
+            return objectX;
+        }
+        
+        function drawEyeBall() {
+            ctx.strokeStyle = '#2c3e50';
+            ctx.lineWidth = 3;
+            ctx.fillStyle = 'rgba(200, 220, 240, 0.2)';
+            ctx.beginPath();
+            ctx.arc(EYE.centerX, EYE.centerY, EYE.radius, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }
+        
+        function drawLens() {
+            const lensX = EYE.lensX;
+            const lensY = EYE.centerY;
+            
+            // 基础宽度
+            const baseWidth = 10;
+            
+            // 根据绝对厚度计算显示宽度（关键：所有眼睛类型使用相同的映射）
+            const absThickness = relativeToAbsolute(state.lensThickness, state.eyeType);
+            const width = baseWidth + (absThickness / 100) * 25; // 绝对厚度0→宽度10，绝对厚度100→宽度35
+            const height = 50;
+            
+            // 晶状体（棕色）
+            ctx.fillStyle = 'rgba(139, 115, 85, 0.75)';
+            ctx.strokeStyle = 'rgba(101, 84, 63, 0.9)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.ellipse(lensX, lensY, Math.max(width, 5), height, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // 细节纹理
+            ctx.strokeStyle = 'rgba(80, 60, 40, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.ellipse(lensX - 2, lensY, Math.max(width * 0.5, 3), height * 0.8, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.ellipse(lensX + 2, lensY, Math.max(width * 0.5, 3), height * 0.8, 0, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        
+        function drawRetina() {
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(EYE.centerX, EYE.centerY, EYE.radius - 8, -0.55, 0.55);
+            ctx.stroke();
+        }
+        
+        function drawGlasses() {
+            const glassX = EYE.lensX - 40;
+            const glassY = EYE.centerY;
+            
+            if (state.glassPower < 0) {
+                // 凹透镜
+                ctx.strokeStyle = '#9b59b6';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(glassX - 10, glassY, 45, -0.35, 0.35);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(glassX + 10, glassY, 45, Math.PI - 0.35, Math.PI + 0.35);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#9b59b6';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('凹透镜', glassX - 20, glassY - 60);
+            } else if (state.glassPower > 0) {
+                // 凸透镜
+                ctx.strokeStyle = '#e67e22';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(glassX + 10, glassY, 45, Math.PI - 0.35, Math.PI + 0.35);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(glassX - 10, glassY, 45, -0.35, 0.35);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#e67e22';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('凸透镜', glassX - 20, glassY - 60);
+            }
+        }
+        
+        function drawLightRays() {
+            const objectX = EYE.lensX - 80 - ((state.objectDistance - 20) / 480) * (EYE.lensX - 130);
+            const lensX = EYE.lensX;
+            
+            // 5条光线
+            const rays = [
+                { angle: -0.12 },
+                { angle: -0.06 },
+                { angle: 0 },
+                { angle: 0.06 },
+                { angle: 0.12 }
+            ];
+            
+            rays.forEach(ray => {
+                const startY = EYE.centerY;
+                const dx = lensX - objectX;
+                const arriveY = startY + dx * Math.tan(ray.angle);
+                
+                // 入射光线
+                ctx.strokeStyle = '#c0392b';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(objectX, startY);
+                
+                if (state.wearGlasses) {
+                    const glassX = lensX - 40;
+                    const glassArriveY = startY + (glassX - objectX) * Math.tan(ray.angle);
+                    ctx.lineTo(glassX, glassArriveY);
+                    ctx.stroke();
+                    
+                    // 眼镜折射
+                    let newAngle = ray.angle;
+                    if (state.glassPower < 0) {
+                        const divergence = (glassArriveY - EYE.centerY) * 0.0006 * Math.abs(state.glassPower);
+                        newAngle += divergence;
+                    } else if (state.glassPower > 0) {
+                        const convergence = (glassArriveY - EYE.centerY) * 0.0006 * state.glassPower;
+                        newAngle -= convergence;
+                    }
+                    
+                    const dx2 = lensX - glassX;
+                    const newArriveY = glassArriveY + dx2 * Math.tan(newAngle);
+                    
+                    ctx.strokeStyle = '#e74c3c';
+                    ctx.beginPath();
+                    ctx.moveTo(glassX, glassArriveY);
+                    ctx.lineTo(lensX, newArriveY);
+                    ctx.stroke();
+                    
+                    drawRefractedRay(lensX, newArriveY);
+                } else {
+                    ctx.lineTo(lensX, arriveY);
+                    ctx.stroke();
+                    
+                    drawRefractedRay(lensX, arriveY);
+                }
+            });
+        }
+        
+        function drawRefractedRay(startX, startY) {
+            const imagePosData = calculateDisplayImagePosition();
+            const pixelPerCm = (EYE.retinaX - EYE.lensX) / EYE.eyeAxisLength;
+            const imagePosX = EYE.lensX + imagePosData.display * pixelPerCm;
+            const imagePosY = EYE.centerY;
+            
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(Math.min(Math.max(imagePosX, EYE.lensX + 10), canvas.width - 20), imagePosY);
+            ctx.stroke();
+            
+            // 延长虚线
+            const retinaPixelX = EYE.retinaX;
+            if (Math.abs(imagePosX - retinaPixelX) > 5) {
+                ctx.setLineDash([4, 4]);
+                ctx.strokeStyle = 'rgba(231, 76, 60, 0.3)';
+                ctx.beginPath();
+                
+                if (imagePosX < retinaPixelX) {
+                    ctx.moveTo(imagePosX, imagePosY);
+                    ctx.lineTo(retinaPixelX + 40, imagePosY);
+                } else {
+                    const endX = Math.min(imagePosX + 30, canvas.width - 10);
+                    ctx.moveTo(imagePosX, imagePosY);
+                    ctx.lineTo(endX, imagePosY);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+        
+        function drawImagePosition() {
+            const imagePosData = calculateDisplayImagePosition();
+            const pixelPerCm = (EYE.retinaX - EYE.lensX) / EYE.eyeAxisLength;
+            let imagePosX = EYE.lensX + imagePosData.display * pixelPerCm;
+            
+            // 限制显示范围
+            imagePosX = Math.min(Math.max(imagePosX, EYE.lensX + 20), canvas.width - 30);
+            const imagePosY = EYE.centerY;
+            
+            // 成像点
+            ctx.fillStyle = '#27ae60';
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(imagePosX, imagePosY, 7, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 成像位置线
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(imagePosX, imagePosY - 65);
+            ctx.lineTo(imagePosX, imagePosY + 65);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#27ae60';
+            ctx.font = 'bold 13px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('像', imagePosX, imagePosY + 82);
+            ctx.textAlign = 'left';
+        }
+        
+        function drawLabels() {
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 13px Arial';
+            
+            ctx.fillText('晶状体', EYE.lensX - 18, EYE.centerY - 75);
+            ctx.fillText('视网膜', EYE.retinaX - 18, EYE.centerY + 80);
+        }
+        
+        function updateStatus() {
+            const imagePosData = calculateDisplayImagePosition();
+            const imagePos = imagePosData.actual;  // 实际像距
+            const retinaPos = EYE.eyeAxisLength;
+            const diff = Math.abs(imagePos - retinaPos);
+            
+            let status = '';
+            let focal = calculateLensFocalLength();
+            const absThickness = relativeToAbsolute(state.lensThickness, state.eyeType);
+            const params = EYE_PARAMS[state.eyeType];
+            
+            if (diff < 0.15) {
+                status = `<strong style="color: #27ae60;">✓ 成像清晰！</strong><br>
+                    像距 ≈ ${imagePos.toFixed(2)} cm ≈ 视网膜位置 ${retinaPos.toFixed(2)} cm<br>
+                    晶状体焦距: ${focal.toFixed(2)} cm | 绝对厚度: ${absThickness.toFixed(1)}<br>
+                    <small>光线恰好汇聚在视网膜上，可以看清物体。</small>`;
+            } else if (imagePos < retinaPos) {
+                const diffCm = (retinaPos - imagePos).toFixed(2);
+                status = `<strong style="color: #e74c3c;">✗ 成像在视网膜前方（模糊）</strong><br>
+                    像距 ≈ ${imagePos.toFixed(2)} cm < 视网膜 ${retinaPos.toFixed(2)} cm<br>
+                    <strong>偏差: ${diffCm}cm（画布已放大${DISPLAY_MAGNIFICATION}倍显示）</strong><br>
+                    晶状体焦距: ${focal.toFixed(2)} cm | 绝对厚度: ${absThickness.toFixed(1)}<br>
+                    <small>绝对厚度范围: ${params.minAbsThickness} - ${params.maxAbsThickness}</small><br>`;
+                
+                if (state.eyeType === 'myopia') {
+                    status += '<small><strong>近视眼：</strong>晶状体偏厚，看远处时像总在视网膜前。需要<strong>凹透镜</strong>矫正。</small>';
+                } else {
+                    status += '<small>晶状体太厚，尝试<strong>减小厚度</strong>或点击自动调节。</small>';
+                }
+            } else {
+                const diffCm = (imagePos - retinaPos).toFixed(2);
+                status = `<strong style="color: #e74c3c;">✗ 成像在视网膜后方（模糊）</strong><br>
+                    像距 ≈ ${imagePos.toFixed(2)} cm > 视网膜 ${retinaPos.toFixed(2)} cm<br>
+                    <strong>偏差: ${diffCm}cm（画布已放大${DISPLAY_MAGNIFICATION}倍显示）</strong><br>
+                    晶状体焦距: ${focal.toFixed(2)} cm | 绝对厚度: ${absThickness.toFixed(1)}<br>
+                    <small>绝对厚度范围: ${params.minAbsThickness} - ${params.maxAbsThickness}</small><br>`;
+                
+                if (state.eyeType === 'hyperopia') {
+                    status += '<small><strong>远视眼：</strong>晶状体偏薄，看近处时像总在视网膜后。需要<strong>凸透镜</strong>矫正。</small>';
+                } else {
+                    status += '<small>晶状体太薄，尝试<strong>增加厚度</strong>或点击自动调节。</small>';
+                }
+            }
+            
+            statusText.innerHTML = status;
+        }
+        
+        // 初始化
+        updateAbsoluteThicknessDisplay();
+        draw();
+    </script>
+</body>
+</html>
